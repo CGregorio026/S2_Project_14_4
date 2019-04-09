@@ -45,9 +45,9 @@
 */
 // Global variables.
 
-var tableData;
+var tableData = [];
 
-var dataCategories;
+var dataCategories = [];
 // The index number of the column by which the web table should be sorted where 0 = 1st column, 1 = 2nd column, etc.
 var sortIndex = 0;
 // A value indicating direction of the sorting where a value of 1 sorts the data in ascending order and a value of -1 sorts the data in descending order
@@ -56,31 +56,80 @@ var sortDirection = 1;
 window.addEventListener("load", function () {
       defineDataArray;
       writeTableData;
+      defineColumns;
 });
 
 function defineDataArray() {
       var tableRows = document.querySelectorAll("table.sortable tbody tr");
       for (var i = 0; i < tableRows.length; i++) {
-            var rowCells = i.children;
+            var rowCells = [i].children();
             var rowValues = new Array(rowCells[i].length);
             for (var j = 0; j < rowCells.length; j++) {
                   rowValues += rowCells;
             }
             tableData += rowValues;
       }
-      tableData.sort(dataSort2D(a, b))
+      tableData.sort(dataSort2D(a, b));
 }
 
 function writeTableData() {
+      for (var i = 0; i < array.length; i++) {
 
+      }
 }
 
 function defineColumns() {
+      var sheetLads = document.createElement("style");
+      document.head.appendChild(sheetLads);
+      // (Can't we just use JavaScript to change the pointer?)
+      document.styleSheets[document.styleSheets.length - 1].insertRule(
+            "table.sortable thead tr th { \
+                  cursor: pointer; \
+            }", 0);
 
+      document.styleSheets[document.styleSheets.length - 1].insertRule(
+            "table.sortable thead tr th:after { \
+                  content: '\\00a0'; \
+                  font-family: monospace; \
+                  margin-left: 5px; \
+            }", 1);
+
+      document.styleSheets[document.styleSheets.length - 1].insertRule(
+            "table.sortable thead tr th:nth-of-type(1)::after { \
+                  content: '\\25b2'; \
+            }", 2);
+
+
+      for (var i = 0; i < document.querySelectorAll("table thead th").length; i++) {
+            dataCategories = i.textContent;
+            i.onclick = columnSort;
+      }
 }
 
 function columnSort(e) {
-
+      var columnText = e.target.textContent;
+      var columnIndex = Array.of(dataCategories[columnText]);
+      // If the sortIndex matches the columnIndex, make it negative (And switch the direction). Otherwise, make them equal (To switch the direction).
+      if (columnIndex === sortIndex) {
+            sortDirection * -1;
+      } else {
+            columnIndex === sortIndex;
+      }
+      var columnNumber = columnIndex + 1;
+      var columnStyles = document.styleSheets[document.styleSheets.length - 1];
+      columnStyles.deleteRule(2);
+      if (sortDirection === 1) {
+            document.styleSheets[document.styleSheets.length - 1].insertRule(
+                  "table.sortable thead tr th:nth-of-type(" + columnNumber + ")::after { \
+                        content: '\\25b2'; \
+                  }", 2);
+      } else {
+            document.styleSheets[document.styleSheets.length - 1].insertRule(
+                  "table.sortable thead tr th:nth-of-type(" + columnNumber + ")::after { \
+                        content: '\\25bc'; \
+                  }", 3);
+      }
+      tableData.sort(dataSort2D(a, b));
 }
 
 
