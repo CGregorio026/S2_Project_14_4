@@ -54,31 +54,50 @@ var sortIndex = 0;
 var sortDirection = 1;
 // Upon loading the page, it will run both the defineDataArray and writeTableData functions.
 window.addEventListener("load", function () {
-      defineDataArray;
-      writeTableData;
-      defineColumns;
+      defineDataArray();
+      writeTableData();
+      defineColumns();
 });
 
+
 function defineDataArray() {
+
       var tableRows = document.querySelectorAll("table.sortable tbody tr");
       for (var i = 0; i < tableRows.length; i++) {
-            var rowCells = [i].children();
-            var rowValues = new Array(rowCells[i].length);
+            // defines the table rows and all of its children.
+            var rowCells = tableRows[i].children;
+            // checked this using a window alert to see how many times it would go through(which was the exact amount of table rows there are in the body).
+            // Loops through all of the table rows in the table body
+            var rowValues = new Array(rowCells.length);
+
             for (var j = 0; j < rowCells.length; j++) {
-                  rowValues += rowCells;
+                  rowValues = rowCells[j].textContent;
             }
-            tableData += rowValues;
+            tableData[i] = rowValues;
       }
-      tableData.sort(dataSort2D(a, b));
+      tableData.sort(dataSort2D);
 }
 
-function writeTableData() {
-      for (var i = 0; i < array.length; i++) {
 
+
+function writeTableData() {
+      var newTableBody = document.createElement("tbody");
+      for (var i = 0; i < tableData.length; i++) {
+            var tableRow = document.createElement("tr");
+            for (var j = 0; j < tableData[i].length; j++) {
+                  var tableCell = document.createElement("td");
+                  tableCell.textContent = tableData[i][j];
+                  tableRow.appendChild(tableCell);
+            }
+            newTableBody.appendChild(tableRow);
       }
+      var sortTable = document.querySelector("table.sortable");
+      var oldTableBody = tableData.appendChild(sortTable);
+      document.replaceChild(oldTableBody, newTableBody);
 }
 
 function defineColumns() {
+      // creates a new stylesheet which will then be appended to the head of the document.
       var sheetLads = document.createElement("style");
       document.head.appendChild(sheetLads);
       // (Can't we just use JavaScript to change the pointer?)
@@ -117,6 +136,7 @@ function columnSort(e) {
       }
       var columnNumber = columnIndex + 1;
       var columnStyles = document.styleSheets[document.styleSheets.length - 1];
+      // deletes the third style rule set by the stylesheet in the define columns function
       columnStyles.deleteRule(2);
       if (sortDirection === 1) {
             document.styleSheets[document.styleSheets.length - 1].insertRule(
@@ -129,7 +149,7 @@ function columnSort(e) {
                         content: '\\25bc'; \
                   }", 3);
       }
-      tableData.sort(dataSort2D(a, b));
+      tableData.sort(dataSort2D);
 }
 
 
